@@ -20,7 +20,7 @@ route.get("/", async (req,res,next) => {
             throw new Error("Vous etes pas authoriser. Veuillez contacter l'administrateur ");
         }
     } catch (error) {
-        return res.json({errors:true ,message: error.message,folders: null  })
+        return res.json({errors:true ,message: error.message,folders: []  })
     }
 });
 

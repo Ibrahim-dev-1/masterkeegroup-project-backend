@@ -5,6 +5,7 @@ const dossierRouter = require("./routes/dossier");
 const fichierRouter = require("./routes/fichier");
 const uploadRouter = require("./routes/upload");
 const authentificationRouter = require("./routes/authentification");
+const emailRoute = require("./routes/emailRouter");
 
 const { createFolder } = require("./myFonctions");
 
@@ -21,6 +22,7 @@ app.use(originAuthorization);
 // utilisation des routes 
 app.use('/fichier', fichierRouter);
 app.use('/', authentificationRouter);
+app.use('/email', emailRoute);
 app.use("/dossier", dossierRouter);
 app.use("/upload", uploadRouter);
 

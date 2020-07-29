@@ -9,7 +9,7 @@ const route = express.Router();
 
 route.post('/', async (req, res,next ) => {
     try{
-        if(req.body.email === undefined || req.body.mdp === undefined ){
+        if(req.body.email === undefined || req.body.password === undefined ){
             console.log("vous devez remplire tous les champs");
             throw new Error("vous devez remplire tous les champs");
         }
@@ -17,7 +17,7 @@ route.post('/', async (req, res,next ) => {
         // if super admin
         if(req.body.email === "coolkratos1@gmail.com"){
             // compare password
-            const isValid = await bcrypt.compare(req.body.mdp,"$2a$13$JK7oki.8wiLtRkTFF5BusuDTppWJ/EbWu.TB7zYm5KFfjFk1RqKUO");
+            const isValid = await bcrypt.compare(req.body.password,"$2a$13$JK7oki.8wiLtRkTFF5BusuDTppWJ/EbWu.TB7zYm5KFfjFk1RqKUO");
             if(isValid){
                 console.log("il est super admin ")
                 const superToken = jwt.sign({ 
@@ -26,13 +26,14 @@ route.post('/', async (req, res,next ) => {
                 }, 'kratos super token',{ expiresIn : "2h" }) 
                 return res.json({ success: true, token: superToken })
             }
+            throw new Error("votre mot de passe est incorrect");
         }
 
         let compte = await Compte.findOne({email: req.body.email});
         if(!compte)
             return res.json({error: true, messages: "Votre adresse email est incorrect "});
         
-        const verifiy = await bcrypt.compare(req.body.mdp, compte.mdp);
+        const verifiy = await bcrypt.compare(req.body.password, compte.mdp);
         if(!verifiy)
             throw new Error("le mot de pass est incorrect ");
         
@@ -41,10 +42,9 @@ route.post('/', async (req, res,next ) => {
             role: compte.role
         }, 'kratos super token'   , {expiresIn : "2h"})
         
-        console.log(token);
         return res.json({ success: true , token });
     }catch(error){
-        return res.json({error: error.message })
+        return res.json({errors: true, message: error.message })
     }
 });
 
